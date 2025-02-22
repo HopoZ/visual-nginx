@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nginx Info</title>
+</head>
+
+<body>
+    <h1>Nginx Information</h1>
+    <p>Nginx is a high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server. It is known for
+        its high performance, stability, rich feature set, simple configuration, and low resource consumption.</p>
+    <h2>Version</h2>
+    <p>Nginx version: 1.18.0-alpine</p>
+
+    <h2>Runtime Information</h2>
+    <div id="nginx-status">Loading...</div>
+
+    <script>
+        fetch('http://localhost:8082/api/nginx_status')
+            .then(response => response.json())
+            .then(data => {
+                const statusDiv = document.getElementById('nginx-status');
+                statusDiv.innerHTML = `
+                    <p>Accepted Connections: ${data.accepted_connections}</p>
+                    <p>Active Connections: ${data.active_connections}</p>
+                    <p>Handled Connections: ${data.handled_connections}</p>
+                    <p>Total Requests: ${data.total_requests}</p>
+                    <p>Reading Connections: ${data.reading_connections}</p>
+                    <p>Writing Connections: ${data.writing_connections}</p>
+                    <p>Waiting Connections: ${data.waiting_connections}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('nginx-status').textContent = 'Error loading Nginx status';
+                console.error('Error fetching Nginx status:', error);
+            });
+    </script>
+</body>
+
+</html>
