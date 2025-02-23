@@ -1,0 +1,14 @@
+# Ignore node_modules directory
+src/frontend/node_modules/
+
+# Ignore build output directory
+src/frontend/dist/
+
+# Ignore environment variable files
+.env
+
+# Ignore log files
+*.log
+
+# Ignore other files and directories
+.DS_Store

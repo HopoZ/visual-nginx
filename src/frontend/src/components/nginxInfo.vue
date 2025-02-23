@@ -1,0 +1,44 @@
+<template>
+    <div>
+        <h1>Nginx Information</h1>
+        <p>Nginx is a high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server. It is known
+            for
+            its high performance, stability, rich feature set, simple configuration, and low resource consumption.</p>
+        <h2>Version</h2>
+        <p>Nginx version: 1.18.0-alpine</p>
+
+        <h2>Runtime Information</h2>
+        <div v-if="status">
+            <p>Accepted Connections: {{ status.accepted_connections }}</p>
+            <p>Active Connections: {{ status.active_connections }}</p>
+            <p>Handled Connections: {{ status.handled_connections }}</p>
+            <p>Total Requests: {{ status.total_requests }}</p>
+            <p>Reading Connections: {{ status.reading_connections }}</p>
+            <p>Writing Connections: {{ status.writing_connections }}</p>
+            <p>Waiting Connections: {{ status.waiting_connections }}</p>
+        </div>
+        <div v-else>
+            Loading...
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            status: null,
+        };
+    },
+    mounted() {
+        fetch('http://localhost:8082/api/nginx_status')
+            .then(response => response.json())
+            .then(data => {
+                this.status = data;
+            })
+            .catch(error => {
+                console.error('Error fetching Nginx status:', error);
+            });
+    },
+};
+</script>

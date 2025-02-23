@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import subprocess
 
@@ -49,6 +49,26 @@ def get_nginx_status():
 @app.route('/api/nginx_status', methods=['GET'])
 def nginx_status():
     return jsonify(get_nginx_status())
+
+@app.route('/api/nginx_config', methods=['GET'])
+def get_nginx_config():
+    try:
+        with open('/etc/nginx/conf.d/default.conf', 'r') as file:
+            config = file.read()
+        return config
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+@app.route('/api/nginx_config', methods=['POST'])
+def update_nginx_config():
+    try:
+        config = request.json.get('config')
+        with open('/etc/nginx/conf.d/default.conf', 'w') as file:
+            file.write(config)
+        subprocess.run(['nginx', '-s', 'reload'])
+        return {"message": "Configuration updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8082, debug=True)

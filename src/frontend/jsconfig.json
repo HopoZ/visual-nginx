@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "element-plus/global"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/components/HelloWorld.vue",
+    "src/components/TheWelcome.vue",
+    "src/components/WelcomeItem.vue",
+    "src/views/HomeView.vue"
+  ]
+}
