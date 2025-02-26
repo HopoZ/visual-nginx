@@ -24,21 +24,20 @@
 </template>
 
 <script>
+import { fetchNginxStatus } from '../api';
+
 export default {
     data() {
         return {
             status: null,
         };
     },
-    mounted() {
-        fetch('http://localhost:8082/api/nginx_status')
-            .then(response => response.json())
-            .then(data => {
-                this.status = data;
-            })
-            .catch(error => {
-                console.error('Error fetching Nginx status:', error);
-            });
+    async mounted() {
+        try {
+            this.status = await fetchNginxStatus();
+        } catch (error) {
+            console.error('Error fetching Nginx status:', error);
+        }
     },
 };
 </script>

@@ -6,6 +6,8 @@ import os
 app = Flask(__name__)
 CORS(app)
 
+nginx_dir = 'E:/TempZ/extra/nginx-1.27.4'  # 默认 Nginx 目录
+
 def get_nginx_status():
     if os.name == 'nt':  # Windows
         nginx_status_url = "http://localhost/nginx_status"
@@ -57,7 +59,7 @@ def nginx_status():
 @app.route('/api/nginx_config', methods=['GET'])
 def get_nginx_config():
     if os.name == 'nt':  # Windows
-        config_path = 'E:/TempZ/extra/nginx-1.27.4/conf/nginx.conf'
+        config_path = os.path.join(nginx_dir, 'conf', 'nginx.conf')
     else:  # Unix/Linux
         config_path = '/etc/nginx/conf.d/default.conf'
 
@@ -71,7 +73,7 @@ def get_nginx_config():
 @app.route('/api/nginx_config', methods=['POST'])
 def update_nginx_config():
     if os.name == 'nt':  # Windows
-        config_path = 'E:/TempZ/extra/nginx-1.27.4/conf/nginx.conf'
+        config_path = os.path.join(nginx_dir, 'conf', 'nginx.conf')
     else:  # Unix/Linux
         config_path = '/etc/nginx/conf.d/default.conf'
 
@@ -81,6 +83,36 @@ def update_nginx_config():
             file.write(config)
         subprocess.run(['nginx', '-s', 'reload'])
         return {"message": "Configuration updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+@app.route('/api/nginx_dir', methods=['POST'])
+def set_nginx_dir():
+    global nginx_dir
+    nginx_dir = request.json.get('nginx_dir')
+    return {"message": f"Nginx directory set to {nginx_dir}"}
+
+@app.route('/api/nginx/start', methods=['POST'])
+def start_nginx():
+    try:
+        subprocess.run([os.path.join(nginx_dir, 'nginx.exe')])
+        return {"message": "Nginx started successfully"}
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+@app.route('/api/nginx/stop', methods=['POST'])
+def stop_nginx():
+    try:
+        subprocess.run([os.path.join(nginx_dir, 'nginx.exe'), '-s', 'stop'])
+        return {"message": "Nginx stopped successfully"}
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+@app.route('/api/nginx/reload', methods=['POST'])
+def reload_nginx():
+    try:
+        subprocess.run([os.path.join(nginx_dir, 'nginx.exe'), '-s', 'reload'])
+        return {"message": "Nginx reloaded successfully"}
     except Exception as e:
         return {"error": str(e)}, 500
 
