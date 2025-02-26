@@ -1,7 +1,18 @@
 <template>
   <div id="app">
-    <NginxInfo />
-    <NginxConfig />
+    <el-container>
+      <el-header>Visual Nginx</el-header>
+      <el-container>
+        <el-aside width="200px">
+          <NginxInfo />
+        </el-aside>
+        <el-container>
+          <NginxConfig />
+          <el-main></el-main>
+          <el-footer>Created By HopoZ</el-footer>
+        </el-container>
+      </el-container>
+    </el-container>
   </div>
 </template>
 

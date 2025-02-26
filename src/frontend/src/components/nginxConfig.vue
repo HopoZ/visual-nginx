@@ -3,7 +3,7 @@
         <h1>Modify Nginx Configuration</h1>
         <textarea v-model="config" rows="20" cols="80"></textarea>
         <br>
-        <button @click="updateConfig">Update Configuration</button>
+        <el-button type="primary" @click="updateConfig">Update Configuration</el-button>
     </div>
 </template>
 

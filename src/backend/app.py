@@ -1,12 +1,16 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import subprocess
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 def get_nginx_status():
-    nginx_status_url = "http://nginx:80/nginx_status"
+    if os.name == 'nt':  # Windows
+        nginx_status_url = "http://localhost/nginx_status"
+    else:  # Unix/Linux
+        nginx_status_url = "http://nginx:80/nginx_status"
 
     try:
         # Use curl to get Nginx status information
@@ -52,8 +56,13 @@ def nginx_status():
 
 @app.route('/api/nginx_config', methods=['GET'])
 def get_nginx_config():
+    if os.name == 'nt':  # Windows
+        config_path = 'E:/TempZ/extra/nginx-1.27.4/conf/nginx.conf'
+    else:  # Unix/Linux
+        config_path = '/etc/nginx/conf.d/default.conf'
+
     try:
-        with open('/etc/nginx/conf.d/default.conf', 'r') as file:
+        with open(config_path, 'r') as file:
             config = file.read()
         return config
     except Exception as e:
@@ -61,9 +70,14 @@ def get_nginx_config():
 
 @app.route('/api/nginx_config', methods=['POST'])
 def update_nginx_config():
+    if os.name == 'nt':  # Windows
+        config_path = 'E:/TempZ/extra/nginx-1.27.4/conf/nginx.conf'
+    else:  # Unix/Linux
+        config_path = '/etc/nginx/conf.d/default.conf'
+
     try:
         config = request.json.get('config')
-        with open('/etc/nginx/conf.d/default.conf', 'w') as file:
+        with open(config_path, 'w') as file:
             file.write(config)
         subprocess.run(['nginx', '-s', 'reload'])
         return {"message": "Configuration updated successfully"}

@@ -12,3 +12,4 @@ src/frontend/dist/
 
 # Ignore other files and directories
 .DS_Store
+.vscode/
