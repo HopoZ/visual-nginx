@@ -21,6 +21,7 @@ import { fetchNginxConfig, updateNginxConfig, setNginxDir, getNginxDir, startNgi
 import CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/nginx/nginx'; // 引入 Nginx 语法高亮
+import { ElMessage } from 'element-plus';
 
 export default {
     data() {
@@ -65,10 +66,14 @@ export default {
         updateConfig() {
             updateNginxConfig(this.config)
                 .then(data => {
-                    alert('Configuration updated successfully');
+                    ElMessage({
+                        message: 'Nginx configuration updated successfully',
+                        type: 'success',
+                    });
                 })
                 .catch(error => {
                     console.error('Error updating Nginx configuration:', error);
+                    ElMessage.error('Oops, this is a error message.Go to check the console log and contact HopoZ');
                 });
         },
         setNginxDir() {

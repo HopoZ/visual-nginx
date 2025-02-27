@@ -28,7 +28,7 @@ export async function fetchNginxConfig() {
 
 export async function updateNginxConfig(config) {
     try {
-        const response = await fetch('http://localhost:8082/api/nginx_config', {
+        const response = await fetch('http://localhost:8082/api/update_nginx_config', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

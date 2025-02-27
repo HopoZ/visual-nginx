@@ -1,7 +1,9 @@
 <template>
   <div id="app" style="height: 100vh;width: 100vw;">
-    <el-container>
-      <el-header>Visual Nginx</el-header>
+    <el-container style="height: 100vh;width: 100vw;">
+      <el-header>
+        <div class="flip-title">Visual Nginx</div>
+      </el-header>
       <el-container>
         <el-aside width="200px">
           <NginxInfo />
@@ -50,7 +52,7 @@ body,
 
 .el-header,
 .el-footer {
-  flex-shrink: 0;
+  flex-shrink: 20;
   text-align: center;
   /* Center the text in header and footer */
 }
@@ -69,5 +71,54 @@ body,
   /* Center the content vertically */
   flex-direction: column;
   /* Ensure the content is in a column */
+}
+
+
+.flip-title {
+  font-size: 60px;
+  font-family: Arial, sans-serif;
+  color: #000000;
+  transform-style: preserve-3d;
+  transform-origin: center;
+  animation: flip 3s infinite;
+  padding: 0px;
+  box-shadow: 0 0 0 2px transparent;
+  /* animation: flip 3s infinite, border-gradient 4s infinite linear; */
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  50% {
+    transform: rotateX(180deg);
+  }
+
+  100% {
+    transform: rotateX(360deg);
+  }
+}
+
+@keyframes border-gradient {
+  0% {
+    box-shadow: 0 0 0 2px #ff00cc;
+  }
+
+  25% {
+    box-shadow: 0 0 0 2px #00ffcc;
+  }
+
+  50% {
+    box-shadow: 0 0 0 2px #00ccff;
+  }
+
+  75% {
+    box-shadow: 0 0 0 2px #cc00ff;
+  }
+
+  100% {
+    box-shadow: 0 0 0 2px #ff00cc;
+  }
 }
 </style>

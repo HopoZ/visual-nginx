@@ -72,13 +72,22 @@ def get_nginx_config():
     except Exception as e:
         return {"error": str(e)}, 500
 
-@app.route('/api/nginx_config', methods=['POST'])
+@app.route('/api/update_nginx_config', methods=['POST'])
 def update_nginx_config():
     try:
         config = request.json.get('config')
+        if not request.is_json:
+            return {"error": "Request must be in JSON format"}, 400
+        config = request.json.get('config')
+        if config is None:
+            return {"error": "Missing 'config' field in JSON data"}, 400
+        if not os.path.exists(os.path.dirname(nginx_conf_path)):
+            return {"error": f"Directory {os.path.dirname(nginx_conf_path)} does not exist"}, 400
+        if not os.access(os.path.dirname(nginx_conf_path), os.W_OK):
+            return {"error": f"No write permission for {os.path.dirname(nginx_conf_path)}"}, 400
         with open(nginx_conf_path, 'w') as file:
             file.write(config)
-        subprocess.run(['nginx', '-s', 'reload', '-c', nginx_conf_path], check=True, cwd=nginx_dir)
+        # subprocess.run(['nginx', '-s', 'reload', '-c', nginx_conf_path], check=True, cwd=nginx_dir)
         return {"message": "Configuration updated successfully"}
     except Exception as e:
         return {"error": str(e)}, 500
@@ -99,7 +108,7 @@ def get_nginx_dir():
 @app.route('/api/nginx/start', methods=['POST'])
 def start_nginx():
     try:
-        subprocess.run(['nginx', '-c', nginx_conf_path], check=True, cwd=nginx_dir)
+        subprocess.run([nginx_dir,'nginx', '-c', nginx_conf_path], check=True)
         return {"message": "Nginx started successfully"}
     except Exception as e:
         return {"error": str(e)}, 500
@@ -107,7 +116,7 @@ def start_nginx():
 @app.route('/api/nginx/stop', methods=['POST'])
 def stop_nginx():
     try:
-        result = subprocess.run(['nginx', '-s', 'stop', '-c', nginx_conf_path], check=True, capture_output=True, text=True, cwd=nginx_dir)
+        result = subprocess.run(['nginx', '-s', 'stop'], check=True, capture_output=True, text=True, cwd=nginx_dir)
         logger.info(f"Stop Nginx output: {result.stdout}")
         logger.info(f"Stop Nginx error output: {result.stderr}")
         return {"message": "Nginx stopped successfully"}

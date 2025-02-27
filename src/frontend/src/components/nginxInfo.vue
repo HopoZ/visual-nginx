@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="box-shadow:inset 0 0 10px #000000; padding: 20px;">
         <h2>Nginx Information</h2>
         <p>Nginx is a high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server. It is known
             for
@@ -25,6 +25,7 @@
 
 <script>
 import { fetchNginxStatus } from '../api';
+import { ref } from 'vue';
 
 export default {
     data() {
