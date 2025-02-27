@@ -80,7 +80,7 @@ body,
   color: #000000;
   transform-style: preserve-3d;
   transform-origin: center;
-  animation: flip 3s infinite;
+  animation: flip 7s infinite;
   padding: 0px;
   box-shadow: 0 0 0 2px transparent;
   /* animation: flip 3s infinite, border-gradient 4s infinite linear; */
