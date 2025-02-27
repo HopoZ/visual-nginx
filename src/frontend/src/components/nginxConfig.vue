@@ -1,18 +1,20 @@
 <template>
     <div>
-        <h1>Modify Nginx Configuration</h1>
+        <h2>Modify Nginx Configuration</h2>
         <div ref="editor"></div>
-        <br>
         <el-button type="primary" @click="updateConfig">Update Configuration</el-button>
         <br><br>
         <h2>Nginx Control</h2>
         <el-input v-model="nginxDir" placeholder="Enter Nginx Directory"></el-input>
         <el-button type="primary" @click="setNginxDir">Set Nginx Directory</el-button>
         <br><br>
-        <p>Current Nginx Directory: {{ currentNginxDir }}</p>
-        <el-button type="success" @click="startNginx">Start Nginx</el-button>
-        <el-button type="warning" @click="stopNginx">Stop Nginx</el-button>
-        <el-button type="info" @click="reloadNginx">Reload Nginx</el-button>
+        <div style="box-shadow:inset 0 0 10px blue;">Current Nginx Directory: {{ currentNginxDir }}</div>
+        <br><br>
+        <div>
+            <el-button type="success" @click="startNginx">Start Nginx</el-button>
+            <el-button type="warning" @click="stopNginx">Stop Nginx</el-button>
+            <el-button type="info" @click="reloadNginx">Reload Nginx</el-button>
+        </div>
     </div>
 </template>
 
