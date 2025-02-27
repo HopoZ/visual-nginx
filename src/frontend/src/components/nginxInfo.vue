@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Nginx Information</h1>
+        <h2>Nginx Information</h2>
         <p>Nginx is a high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server. It is known
             for
             its high performance, stability, rich feature set, simple configuration, and low resource consumption.</p>

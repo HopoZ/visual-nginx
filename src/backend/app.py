@@ -2,11 +2,18 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import subprocess
 import os
+import logging
 
 app = Flask(__name__)
 CORS(app)
 
+# 配置日志
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 nginx_dir = 'E:/TempZ/extra/nginx-1.27.4'  # 默认 Nginx 目录
+nginx_conf_path = os.path.join(nginx_dir, 'conf', 'nginx.conf')  # Nginx 配置文件路径
+logger.info(f"nginx_conf_path: {nginx_conf_path}")
 
 def get_nginx_status():
     if os.name == 'nt':  # Windows
@@ -20,7 +27,7 @@ def get_nginx_status():
         lines = status_output.strip().split("\n")
 
         # Log the status output for debugging
-        print("Nginx status output:", status_output)
+        logger.info(f"Nginx status output: {status_output}")
 
         # Check if the lines list has the expected number of elements
         if len(lines) < 4:
@@ -58,13 +65,8 @@ def nginx_status():
 
 @app.route('/api/nginx_config', methods=['GET'])
 def get_nginx_config():
-    if os.name == 'nt':  # Windows
-        config_path = os.path.join(nginx_dir, 'conf', 'nginx.conf')
-    else:  # Unix/Linux
-        config_path = '/etc/nginx/conf.d/default.conf'
-
     try:
-        with open(config_path, 'r') as file:
+        with open(nginx_conf_path, 'r') as file:
             config = file.read()
         return config
     except Exception as e:
@@ -72,30 +74,32 @@ def get_nginx_config():
 
 @app.route('/api/nginx_config', methods=['POST'])
 def update_nginx_config():
-    if os.name == 'nt':  # Windows
-        config_path = os.path.join(nginx_dir, 'conf', 'nginx.conf')
-    else:  # Unix/Linux
-        config_path = '/etc/nginx/conf.d/default.conf'
-
     try:
         config = request.json.get('config')
-        with open(config_path, 'w') as file:
+        with open(nginx_conf_path, 'w') as file:
             file.write(config)
-        subprocess.run(['nginx', '-s', 'reload'])
+        subprocess.run(['nginx', '-s', 'reload', '-c', nginx_conf_path], check=True, cwd=nginx_dir)
         return {"message": "Configuration updated successfully"}
     except Exception as e:
         return {"error": str(e)}, 500
 
 @app.route('/api/nginx_dir', methods=['POST'])
 def set_nginx_dir():
-    global nginx_dir
+    global nginx_dir, nginx_conf_path
     nginx_dir = request.json.get('nginx_dir')
+    nginx_conf_path = os.path.join(nginx_dir, 'conf', 'nginx.conf')
+    logger.info(f"Nginx directory set to {nginx_dir}")
+    logger.info(f"Nginx config path set to {nginx_conf_path}")
     return {"message": f"Nginx directory set to {nginx_dir}"}
+
+@app.route('/api/get_nginx_dir', methods=['GET'])
+def get_nginx_dir():
+    return jsonify({"nginx_dir": nginx_dir})
 
 @app.route('/api/nginx/start', methods=['POST'])
 def start_nginx():
     try:
-        subprocess.run([os.path.join(nginx_dir, 'nginx.exe')])
+        subprocess.run(['nginx', '-c', nginx_conf_path], check=True, cwd=nginx_dir)
         return {"message": "Nginx started successfully"}
     except Exception as e:
         return {"error": str(e)}, 500
@@ -103,15 +107,23 @@ def start_nginx():
 @app.route('/api/nginx/stop', methods=['POST'])
 def stop_nginx():
     try:
-        subprocess.run([os.path.join(nginx_dir, 'nginx.exe'), '-s', 'stop'])
+        result = subprocess.run(['nginx', '-s', 'stop', '-c', nginx_conf_path], check=True, capture_output=True, text=True, cwd=nginx_dir)
+        logger.info(f"Stop Nginx output: {result.stdout}")
+        logger.info(f"Stop Nginx error output: {result.stderr}")
         return {"message": "Nginx stopped successfully"}
+    except subprocess.CalledProcessError as e:
+        logger.error(f"CalledProcessError: {e}")
+        logger.error(f"Output: {e.output}")
+        logger.error(f"Error output: {e.stderr}")
+        return {"error": f"Failed to stop Nginx: {e}"}, 500
     except Exception as e:
+        logger.error(f"Exception: {e}")
         return {"error": str(e)}, 500
 
 @app.route('/api/nginx/reload', methods=['POST'])
 def reload_nginx():
     try:
-        subprocess.run([os.path.join(nginx_dir, 'nginx.exe'), '-s', 'reload'])
+        subprocess.run(['nginx', '-s', 'reload', '-c', nginx_conf_path], check=True, cwd=nginx_dir)
         return {"message": "Nginx reloaded successfully"}
     except Exception as e:
         return {"error": str(e)}, 500
