@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" style="height: 100vh;width: 100vw;">
     <el-container>
       <el-header>Visual Nginx</el-header>
       <el-container>
@@ -7,8 +7,9 @@
           <NginxInfo />
         </el-aside>
         <el-container>
-          <NginxConfig />
-          <el-main></el-main>
+          <el-main>
+            <NginxConfig />
+          </el-main>
           <el-footer>Created By HopoZ</el-footer>
         </el-container>
       </el-container>
@@ -30,5 +31,43 @@ export default {
 </script>
 
 <style>
-/* Add your styles here */
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+.el-container {
+  display: flex;
+  flex: 1;
+}
+
+.el-header,
+.el-footer {
+  flex-shrink: 0;
+  text-align: center;
+  /* Center the text in header and footer */
+}
+
+.el-aside {
+  flex-shrink: 0;
+}
+
+.el-main {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  /* Center the content horizontally */
+  align-items: center;
+  /* Center the content vertically */
+  flex-direction: column;
+  /* Ensure the content is in a column */
+}
 </style>
