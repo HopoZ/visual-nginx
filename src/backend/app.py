@@ -11,8 +11,11 @@ CORS(app)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-nginx_dir = 'E:/TempZ/extra/nginx-1.27.4'  # 默认 Nginx 目录
-nginx_conf_path = os.path.join(nginx_dir, 'conf', 'nginx.conf')  # Nginx 配置文件路径
+nginx_dir = '/user/sbin/nginx'  # 默认 Nginx 目录
+if os.name == 'nt':
+    nginx_conf_path = os.path.join(nginx_dir, 'conf', 'nginx.conf')  # Nginx 配置文件路径
+else:  # Unix/Linux
+    nginx_conf_path = './default.conf'
 logger.info(f"nginx_conf_path: {nginx_conf_path}")
 
 def get_nginx_status():

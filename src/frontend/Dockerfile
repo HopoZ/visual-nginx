@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY node_modules ./node_modules
 COPY . .
+RUN npm run build
 RUN npm run dev
 
 FROM nginx:alpine
